@@ -47,6 +47,7 @@ func defaultMiddlewares() map[string]gin.HandlerFunc {
 		"cors":      Cors(),
 		"requestid": RequestID(),
 		"logger":    Logger(),
-		"dump":      gindump.Dump(),
 	}
 }
+
+var Middleware = defaultMiddlewares()
