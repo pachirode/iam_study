@@ -70,7 +70,29 @@ func NewConfig() *Config {
 }
 
 func (config *Config) Complete() CompletedConfig {
+<<<<<<< HEAD
 	return CompletedConfig{c}
 }
 
 func (config *Config) New()
+=======
+	return CompletedConfig{config}
+}
+
+func (config CompletedConfig) New() (*GenericAPIServer, error) {
+	server := &GenericAPIServer{
+		SecureServingInfo:   config.SecureServingInfo,
+		InsecureServingInfo: config.InsecureServingInfo,
+		mode:                config.Mode,
+		healthz:             config.Healthz,
+		enableMetrics:       config.EnableMetrics,
+		enableProfiling:     config.EnableProfiling,
+		middlewares:         config.Middlewares,
+		Engine:              gin.New(),
+	}
+
+	initGenericAPIServer(server)
+
+	return server, nil
+}
+>>>>>>> 4f132fc (add apiserver run options)
