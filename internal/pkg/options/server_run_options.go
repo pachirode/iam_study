@@ -1,13 +1,10 @@
 package options
 
-<<<<<<< HEAD
-=======
 import (
 	"github.com/pachirode/iam_study/internal/pkg/server"
 	"github.com/spf13/pflag"
 )
 
->>>>>>> 4f132fc (add apiserver run options)
 type ServerRunOptions struct {
 	Mode        string   `json:"mode" mapstructure:"mode"`
 	Healthz     bool     `json:"healthz" mapstructure:"healthz"`
@@ -15,8 +12,6 @@ type ServerRunOptions struct {
 }
 
 func NewServerRunOptions() *ServerRunOptions {
-<<<<<<< HEAD
-=======
 	defaults := server.NewConfig()
 
 	return &ServerRunOptions{
@@ -44,5 +39,4 @@ func (opt *ServerRunOptions) AddFlags(flagSet *pflag.FlagSet) {
 	flagSet.StringVar(&opt.Mode, "server.mode", opt.Mode, "Start server in specified mode. Support: debug, test, release.")
 	flagSet.BoolVar(&opt.Healthz, "server.healthz", opt.Healthz, "Add self readiness check and install /healthz router.")
 	flagSet.StringSliceVar(&opt.Middlewares, "server.middlewares", opt.Middlewares, "List of allowed middlewares for server, if empty use default.")
->>>>>>> 4f132fc (add apiserver run options)
 }

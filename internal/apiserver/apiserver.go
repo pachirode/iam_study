@@ -1,12 +1,5 @@
 package apiserver
 
-<<<<<<< HEAD
-import "github.com/pachirode/iam_study/pkg/app"
-
-const commandDesc = `The IAM API server validates and configurets data for the api object`
-
-func NewApp(basename string) *app.App {}
-=======
 import (
 	"github.com/pachirode/iam_study/internal/apiserver/config"
 	"github.com/pachirode/iam_study/internal/apiserver/options"
@@ -42,4 +35,3 @@ func run(opts *options.Options) app.RunFunc {
 		return Run(cfg)
 	}
 }
->>>>>>> 4f132fc (add apiserver run options)

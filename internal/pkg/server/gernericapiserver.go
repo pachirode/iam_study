@@ -1,14 +1,6 @@
 package server
 
 import (
-<<<<<<< HEAD
-	"net/http"
-	"time"
-
-	"github.com/gin-gonic/gin"
-	"github.com/pachirode/iam_study/internal/pkg/middleware"
-	"github.com/pachirode/iam_study/pkg/log"
-=======
 	"context"
 	"errors"
 	"fmt"
@@ -18,14 +10,12 @@ import (
 
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
-	"github.com/hashicorp/hcl/hcl/strconv"
 	"github.com/pachirode/iam_study/internal/pkg/middleware"
 	"github.com/pachirode/iam_study/pkg/core"
 	"github.com/pachirode/iam_study/pkg/log"
 	"github.com/pachirode/iam_study/pkg/version"
 	ginPrometheus "github.com/zsais/go-gin-prometheus"
 	"golang.org/x/sync/errgroup"
->>>>>>> 4f132fc (add apiserver run options)
 )
 
 type GenericAPIServer struct {
@@ -53,13 +43,6 @@ func (server *GenericAPIServer) Setup() {
 func (server *GenericAPIServer) InstallMiddlewares() {
 	server.Use(middleware.RequestID())
 
-<<<<<<< HEAD
-	for _, middleware := range server.middlewares {
-	}
-}
-
-func initGenericAPIServer(server *GenericAPIServer) {
-=======
 	for _, m := range server.middlewares {
 		mv, ok := middleware.Middleware[m]
 		if !ok {
@@ -206,5 +189,4 @@ func (server *GenericAPIServer) ping(ctx context.Context) error {
 		default:
 		}
 	}
->>>>>>> 4f132fc (add apiserver run options)
 }

@@ -70,12 +70,6 @@ func NewConfig() *Config {
 }
 
 func (config *Config) Complete() CompletedConfig {
-<<<<<<< HEAD
-	return CompletedConfig{c}
-}
-
-func (config *Config) New()
-=======
 	return CompletedConfig{config}
 }
 
@@ -95,4 +89,3 @@ func (config CompletedConfig) New() (*GenericAPIServer, error) {
 
 	return server, nil
 }
->>>>>>> 4f132fc (add apiserver run options)

@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"time"
 
@@ -83,7 +84,7 @@ func LoggerWithConfig(config gin.LoggerConfig) gin.HandlerFunc {
 	notLogged := config.SkipPaths
 	isTerm := true
 
-	if w, ok := out.(*os.File); !ok || os.Getenv("TERM") == "dumb" || (!isatty.IsTerminal(w.Fd())) && !isatty.IsCygwinTerminal(w.Fd()) {
+	if w, ok := out.(*os.File); !ok || os.Getenv("TERM") == "dumb" || (!isatty.IsTerminal(w.Fd()) && !isatty.IsCygwinTerminal(w.Fd())) {
 		isTerm = false
 	}
 

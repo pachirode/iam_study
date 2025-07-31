@@ -1,8 +1,5 @@
 package options
 
-<<<<<<< HEAD
-type Options struct{}
-=======
 import (
 	"encoding/json"
 
@@ -47,4 +44,3 @@ func (opt *Options) String() string {
 func (opt *Options) Complete() error {
 	return nil
 }
->>>>>>> 4f132fc (add apiserver run options)
