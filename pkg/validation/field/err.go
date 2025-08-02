@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	utilerrors "github.com/pachirode/iam_study/pkg/errors"
-	"github.com/pachirode/iam_study/pkg/sets"
+	"github.com/pachirode/iam_study/pkg/utils/sets"
 )
 
 type (
@@ -185,6 +185,5 @@ func (list ErrorList) Filter(fns ...utilerrors.Matcher) ErrorList {
 	if err == nil {
 		return nil
 	}
-	// FilterOut takes an Aggregate and returns an Aggregate
 	return fromAggregate(err.(utilerrors.Aggregate))
 }

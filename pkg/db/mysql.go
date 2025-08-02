@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/pachirode/iam_study/pkg/db/logger"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 type Options struct {
@@ -18,6 +18,7 @@ type Options struct {
 	MaxOpenConnections    int
 	MaxConnectionLifeTime time.Duration
 	LogLevel              int
+	Logger                logger.Interface
 }
 
 func New(opts *Options) (*gorm.DB, error) {
@@ -30,7 +31,7 @@ func New(opts *Options) (*gorm.DB, error) {
 		"Local")
 
 	db, err := gorm.Open(mysql.Open(dns), &gorm.Config{
-		Logger: logger.New(opts.LogLevel),
+		Logger: opts.Logger,
 	})
 	if err != nil {
 		return nil, err
