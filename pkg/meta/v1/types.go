@@ -43,8 +43,8 @@ type ObjectMeta struct {
 	Name         string    `json:"name,omitempty" gorm:"column:name;type:varchar(64);not null" validate:"name"`
 	Extend       Extend    `json:"extend,omitempty" gorm:"-" validate:"omitempty"`
 	ExtendShadow string    `json:"-" gorm:"column:extendShadow" validate:"omitempty"`
-	CreateAt     time.Time `json:"createAt,omitempty" gorm:"column:createAt"`
-	UpdateAt     time.Time `json:"updateAt,omitempty" gorm:"column:updateAt"`
+	CreatedAt    time.Time `json:"createdAt,omitempty" gorm:"column:createdAt"`
+	UpdatedAt    time.Time `json:"updatedAt,omitempty" gorm:"column:updatedAt"`
 }
 
 func (obj *ObjectMeta) BeforeCreate(gdb *gorm.DB) error {

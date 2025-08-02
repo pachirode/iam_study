@@ -1,6 +1,9 @@
 package scheme
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 // resource.group.com -> group=com, version=group, resource=resource
 func ParseResourceArg(arg string) (*GroupVersionResource, GroupResource) {
@@ -37,4 +40,41 @@ func ParseGroupKind(arg string) GroupKind {
 	}
 
 	return GroupKind{Kind: arg}
+}
+
+// group/version
+func ParseGroupVersion(arg string) (GroupVersion, error) {
+	if len(arg) == 0 || arg == "/" {
+		return GroupVersion{}, nil
+	}
+
+	switch strings.Count(arg, "/") {
+	case 0:
+		return GroupVersion{"", arg}, nil
+	case 1:
+		idx := strings.Index(arg, "/")
+		return GroupVersion{arg[:idx], arg[idx+1:]}, nil
+	default:
+		return GroupVersion{}, fmt.Errorf("Unexpected groupVersion string: %s", arg)
+	}
+}
+
+func bestMatch(kinds []GroupVersionKind, targets []GroupVersionKind) GroupVersionKind {
+	for _, gvk := range targets {
+		for _, k := range kinds {
+			if k == gvk {
+				return k
+			}
+		}
+	}
+
+	return targets[0]
+}
+
+func FormAPIVersionAndKind(apiVersion, kind string) GroupVersionKind {
+	if groupVersion, err := ParseGroupVersion(apiVersion); err != nil {
+		return GroupVersionKind{Group: groupVersion.Group, Version: groupVersion.Group, Kind: kind}
+	}
+
+	return GroupVersionKind{Kind: kind}
 }
