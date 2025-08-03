@@ -49,6 +49,15 @@ func validateDescription(fl validator.FieldLevel) bool {
 	return len(description) <= maxDescriptionLength
 }
 
+func validateName(fl validator.FieldLevel) bool {
+	name := fl.Field().String()
+	if errs := IsQualifiedName(name); len(errs) > 0 {
+		return false
+	}
+
+	return true
+}
+
 func prefixEach(msgs []string, prefix string) []string {
 	for i := range msgs {
 		msgs[i] = prefix + msgs[i]

@@ -2,6 +2,7 @@ package v1
 
 import (
 	"context"
+	"regexp"
 	"sync"
 
 	"github.com/pachirode/iam_study/internal/apiserver/store"
@@ -13,7 +14,7 @@ import (
 )
 
 type UserSrv interface {
-	Creat(ctx context.Context, user *v1.User, opts metaV1.CreateOptions) error
+	Create(ctx context.Context, user *v1.User, opts metaV1.CreateOptions) error
 	Update(ctx context.Context, user *v1.User, opts metaV1.UpdateOptions) error
 	Delete(ctx context.Context, username string, opts metaV1.DeleteOptions) error
 	DeleteCollection(ctx context.Context, usernames []string, opts metaV1.DeleteOptions) error
@@ -26,6 +27,8 @@ type UserSrv interface {
 type userService struct {
 	store store.Factory
 }
+
+var _ UserSrv = (*userService)(nil)
 
 func newUsers(srv *service) *userService {
 	return &userService{store: srv.store}
@@ -89,4 +92,81 @@ func (u *userService) List(ctx context.Context, opts metaV1.ListOptions) (*v1.Us
 	log.L(ctx).Debugf("Get %d users from backend storage", len(infos))
 
 	return &v1.UserList{ListMeta: users.ListMeta, Items: infos}, nil
+}
+
+func (u *userService) ListWithBadPerformance(ctx context.Context, opts metaV1.ListOptions) (*v1.UserList, error) {
+	users, err := u.store.Users().List(ctx, opts)
+	if err != nil {
+		return nil, errors.WithCode(code.ErrDatabase, err.Error())
+	}
+
+	infos := make([]*v1.User, 0)
+	for _, user := range users.Items {
+		infos = append(infos, &v1.User{
+			ObjectMeta: metaV1.ObjectMeta{
+				ID:        user.ID,
+				Name:      user.Name,
+				CreatedAt: user.CreatedAt,
+				UpdatedAt: user.UpdatedAt,
+			},
+			Nickname: user.Nickname,
+			Email:    user.Email,
+			Phone:    user.Phone,
+		})
+	}
+
+	return &v1.UserList{ListMeta: users.ListMeta, Items: infos}, nil
+}
+
+func (u *userService) Create(ctx context.Context, user *v1.User, opts metaV1.CreateOptions) error {
+	if err := u.store.Users().Create(ctx, user, opts); err != nil {
+		if match, _ := regexp.MatchString("Duplicate entry '.*' for key 'idx_name'", err.Error()); match {
+			return errors.WithCode(code.ErrUserAlreadyExist, err.Error())
+		}
+
+		return errors.WithCode(code.ErrDatabase, err.Error())
+	}
+
+	return nil
+}
+
+func (u *userService) DeleteCollection(ctx context.Context, usernames []string, opts metaV1.DeleteOptions) error {
+	if err := u.store.Users().DeleteCollection(ctx, usernames, opts); err != nil {
+		return errors.WithCode(code.ErrDatabase, err.Error())
+	}
+
+	return nil
+}
+
+func (u *userService) Delete(ctx context.Context, username string, opts metaV1.DeleteOptions) error {
+	if err := u.store.Users().Delete(ctx, username, opts); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (u *userService) Get(ctx context.Context, username string, opts metaV1.GetOptions) (*v1.User, error) {
+	user, err := u.store.Users().Get(ctx, username, opts)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (u *userService) Update(ctx context.Context, user *v1.User, opts metaV1.UpdateOptions) error {
+	if err := u.store.Users().Update(ctx, user, opts); err != nil {
+		return errors.WithCode(code.ErrDatabase, err.Error())
+	}
+
+	return nil
+}
+
+func (u *userService) ChangePassword(ctx context.Context, user *v1.User) error {
+	if err := u.store.Users().Update(ctx, user, metaV1.UpdateOptions{}); err != nil {
+		return errors.WithCode(code.ErrDatabase, err.Error())
+	}
+
+	return nil
 }
