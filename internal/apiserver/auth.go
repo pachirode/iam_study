@@ -78,6 +78,10 @@ func newJwtAuth() middleware.AuthStrategy {
 	return auth.NewJWTStrategy(*ginJwt)
 }
 
+func newAutoAuth() middleware.AuthStrategy {
+	return auth.NewAutoStrategy(newBasicAuth().(auth.BasicStrategy), newJwtAuth().(auth.JWTStrategy))
+}
+
 func authenticator() func(ctx *gin.Context) (interface{}, error) {
 	return func(ctx *gin.Context) (interface{}, error) {
 		var login loginInfo

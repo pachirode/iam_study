@@ -49,10 +49,10 @@ func PrintSections(w io.Writer, nfs NamedFlagSets, cols int) {
 		if cols > 24 {
 			i := strings.Index(buf.String(), zzz)
 			lines := strings.Split(buf.String()[:i], "\n")
-			fmt.Fprintf(w, strings.Join(lines[:len(lines)-1], "\n"))
+			fmt.Fprint(w, "%s", strings.Join(lines[:len(lines)-1], "\n"))
 			fmt.Fprintln(w)
 		} else {
-			fmt.Fprintf(w, buf.String())
+			fmt.Fprint(w, "%s", buf.String())
 		}
 	}
 }

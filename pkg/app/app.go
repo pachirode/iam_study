@@ -5,14 +5,15 @@ import (
 	"os"
 
 	"github.com/fatih/color"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+
 	"github.com/pachirode/iam_study/pkg/errors"
 	"github.com/pachirode/iam_study/pkg/flags"
 	"github.com/pachirode/iam_study/pkg/log"
 	"github.com/pachirode/iam_study/pkg/term"
 	"github.com/pachirode/iam_study/pkg/version"
 	"github.com/pachirode/iam_study/pkg/version/verflag"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var (

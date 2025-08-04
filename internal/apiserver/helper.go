@@ -8,7 +8,9 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
+	"github.com/pachirode/iam_study/internal/apiserver/config"
 	v1 "github.com/pachirode/iam_study/internal/pkg/api/apiserver/v1"
+	genericApiServer "github.com/pachirode/iam_study/internal/pkg/server"
 	"github.com/pachirode/iam_study/pkg/log"
 )
 
@@ -96,4 +98,25 @@ func authorizator() func(data interface{}, ctx *gin.Context) bool {
 
 		return false
 	}
+}
+
+func buildGenericConfig(cfg *config.Config) (genericConfig *genericApiServer.Config, lastErr error) {
+	genericConfig = genericApiServer.NewConfig()
+	if lastErr = cfg.GenericServerRunOptions.ApplyTo(genericConfig); lastErr != nil {
+		return
+	}
+
+	if lastErr = cfg.InsecureServing.ApplyTo(genericConfig); lastErr != nil {
+		return
+	}
+
+	if lastErr = cfg.SecureServing.ApplyTo(genericConfig); lastErr != nil {
+		return
+	}
+
+	if lastErr = cfg.FeatureOptions.ApplyTo(genericConfig); lastErr != nil {
+		return
+	}
+
+	return
 }

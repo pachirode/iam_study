@@ -22,7 +22,7 @@ func helpCommand(name string) *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			cmd, _, e := cmd.Root().Find(args)
 			if cmd == nil || e != nil {
-				cmd.Printf("Unkonwn help topic %#q\n", args)
+				cmd.Printf("Unknown help topic %#q\n", args)
 				_ = cmd.Root().Usage()
 			} else {
 				cmd.InitDefaultHelpFlag()

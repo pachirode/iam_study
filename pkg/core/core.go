@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/pachirode/iam_study/pkg/errors"
 	"github.com/pachirode/iam_study/pkg/log"
 )

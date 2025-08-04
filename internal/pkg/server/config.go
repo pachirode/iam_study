@@ -40,14 +40,14 @@ type JwtInfo struct {
 }
 
 type Config struct {
-	SecureServingInfo   *SecureServingInfo
-	InsecureServingInfo *InsecureServingInfo
-	Jwt                 *JwtInfo
-	Mode                string
-	Middlewares         []string
-	Healthz             bool
-	EnableProfiling     bool
-	EnableMetrics       bool
+	SecureServing   *SecureServingInfo
+	InsecureServing *InsecureServingInfo
+	Jwt             *JwtInfo
+	Mode            string
+	Middlewares     []string
+	Healthz         bool
+	EnableProfiling bool
+	EnableMetrics   bool
 }
 
 type CompletedConfig struct {
@@ -75,8 +75,8 @@ func (config *Config) Complete() CompletedConfig {
 
 func (config CompletedConfig) New() (*GenericAPIServer, error) {
 	server := &GenericAPIServer{
-		SecureServingInfo:   config.SecureServingInfo,
-		InsecureServingInfo: config.InsecureServingInfo,
+		SecureServingInfo:   config.SecureServing,
+		InsecureServingInfo: config.InsecureServing,
 		mode:                config.Mode,
 		healthz:             config.Healthz,
 		enableMetrics:       config.EnableMetrics,

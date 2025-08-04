@@ -2,11 +2,11 @@ package mysql
 
 import (
 	"context"
-	"os/user"
 
 	v1 "github.com/pachirode/iam_study/internal/pkg/api/apiserver/v1"
 	"github.com/pachirode/iam_study/internal/pkg/code"
 	"github.com/pachirode/iam_study/pkg/errors"
+	"github.com/pachirode/iam_study/pkg/fields"
 	metaV1 "github.com/pachirode/iam_study/pkg/meta/v1"
 	"github.com/pachirode/iam_study/pkg/utils/gormutil"
 	"gorm.io/gorm"
@@ -57,4 +57,35 @@ func (u *users) Get(ctx context.Context, username string, opts metaV1.GetOptions
 	}
 
 	return user, nil
+}
+
+func (u *users) List(ctx context.Context, opts metaV1.ListOptions) (*v1.UserList, error) {
+	ret := &v1.UserList{}
+	ol := gormutil.Unpointer(opts.Offset, opts.Limit)
+
+	selector, _ := fields.ParseSelector(opts.FieldSelector)
+	username, _ := selector.RequiresExactMatch("name")
+	d := u.db.Where("name like ? and status = 1", "%"+username+"%").Offset(ol.Offset).Limit(ol.Limit).Order("id desc").Find(&ret.Items).Offset(-1).Limit(-1).Count(&ret.TotalCount)
+
+	return ret, d.Error
+}
+
+func (u *users) ListOptional(ctx context.Context, opts metaV1.ListOptions) (*v1.UserList, error) {
+	ret := &v1.UserList{}
+	ol := gormutil.Unpointer(opts.Offset, opts.Limit)
+
+	where := v1.User{}
+	whereNot := v1.User{
+		IsAdmin: 0,
+	}
+
+	selector, _ := fields.ParseSelector(opts.FieldSelector)
+	username, found := selector.RequiresExactMatch("name")
+	if found {
+		where.Name = username
+	}
+
+	d := u.db.Where(where).Not(whereNot).Offset(ol.Offset).Limit(ol.Limit).Order("id desc").Find(&ret.Items).Offset(-1).Limit(-1).Count(&ret.TotalCount)
+
+	return ret, d.Error
 }

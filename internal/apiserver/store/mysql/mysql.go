@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/pachirode/iam_study/internal/store"
+	"github.com/pachirode/iam_study/internal/apiserver/store"
 	"github.com/pachirode/iam_study/pkg/db"
 	"github.com/pachirode/iam_study/pkg/errors"
 	"gorm.io/gorm"

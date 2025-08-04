@@ -43,11 +43,23 @@ type GracefulShutdown struct {
 	errorHandler ErrorHandler
 }
 
+var _ GracefulShutdownInterface = (*GracefulShutdown)(nil)
+
 func New() *GracefulShutdown {
 	return &GracefulShutdown{
 		callbacks: make([]ShutdownCallback, 0, 10),
 		managers:  make([]ShutdownManager, 0, 3),
 	}
+}
+
+func (gracefulShutdown *GracefulShutdown) Start() error {
+	for _, manger := range gracefulShutdown.managers {
+		if err := manger.Start(gracefulShutdown); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (gracefulShutdownP *GracefulShutdown) AddShutdownCallback(shutdownCallback ShutdownCallback) {

@@ -1,9 +1,10 @@
 package v1
 
 import (
+	"gorm.io/gorm"
+
 	metaV1 "github.com/pachirode/iam_study/pkg/meta/v1"
 	"github.com/pachirode/iam_study/pkg/utils/idutil"
-	"gorm.io/gorm"
 )
 
 type Secret struct {

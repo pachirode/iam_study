@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"time"
 
+	"gorm.io/gorm"
+
 	"github.com/pachirode/iam_study/pkg/auth"
 	metaV1 "github.com/pachirode/iam_study/pkg/meta/v1"
 	"github.com/pachirode/iam_study/pkg/utils/idutil"
-	"gorm.io/gorm"
 )
 
 type User struct {
