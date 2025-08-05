@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+
 	v1 "github.com/pachirode/iam_study/internal/pkg/api/apiserver/v1"
 	"github.com/pachirode/iam_study/internal/pkg/code"
 	"github.com/pachirode/iam_study/pkg/auth"

@@ -8,16 +8,16 @@ import (
 )
 
 type Secret struct {
-	metaV1.ObjectMeta `json:"metaData,omitempty"`
-	Username          string `json:"username" gorm:"column:username" validate:"omitempty"`
-	SecretID          string `json:"secretID" gorm:"column:secretID" validate:"omitempty"`
-	SecretKey         string `json:"secretKey" gorm:"column:secretKey" validate:"omitempty"`
-	Expires           int64  `json:"expires" gorm:"column:expires" validate:"omitempty"`
-	Description       string `json:"description" gorm:"column:description" validate:"description"`
+	metaV1.ObjectMeta `       json:"metaData,omitempty"`
+	Username          string `json:"username"           gorm:"column:username"    validate:"omitempty"`
+	SecretID          string `json:"secretID"           gorm:"column:secretID"    validate:"omitempty"`
+	SecretKey         string `json:"secretKey"          gorm:"column:secretKey"   validate:"omitempty"`
+	Expires           int64  `json:"expires"            gorm:"column:expires"     validate:"omitempty"`
+	Description       string `json:"description"        gorm:"column:description" validate:"description"`
 }
 
 type SecretList struct {
-	metaV1.ListMeta `json:",inline"`
+	metaV1.ListMeta `          json:",inline"`
 	Items           []*Secret `json:"items"`
 }
 

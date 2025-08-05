@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/pachirode/iam_study/internal/apiserver/store"
 	"github.com/pachirode/iam_study/internal/pkg/code"
 	"github.com/pachirode/iam_study/pkg/core"
@@ -24,7 +25,8 @@ func Validation() gin.HandlerFunc {
 				}
 			case "/v1/users/:name", "/v1/users/:name/change_password":
 				username := ctx.GetString("username")
-				if ctx.Request.Method == http.MethodDelete || (ctx.Request.Method != http.MethodDelete && username != ctx.Param("name")) {
+				if ctx.Request.Method == http.MethodDelete ||
+					(ctx.Request.Method != http.MethodDelete && username != ctx.Param("name")) {
 					core.WriteResponse(ctx, errors.WithCode(code.ErrPermissionDenied, ""), nil)
 					ctx.Abort()
 

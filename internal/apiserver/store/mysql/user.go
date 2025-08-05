@@ -3,13 +3,14 @@ package mysql
 import (
 	"context"
 
+	"gorm.io/gorm"
+
 	v1 "github.com/pachirode/iam_study/internal/pkg/api/apiserver/v1"
 	"github.com/pachirode/iam_study/internal/pkg/code"
 	"github.com/pachirode/iam_study/pkg/errors"
 	"github.com/pachirode/iam_study/pkg/fields"
 	metaV1 "github.com/pachirode/iam_study/pkg/meta/v1"
 	"github.com/pachirode/iam_study/pkg/utils/gormutil"
-	"gorm.io/gorm"
 )
 
 type users struct {
@@ -65,7 +66,14 @@ func (u *users) List(ctx context.Context, opts metaV1.ListOptions) (*v1.UserList
 
 	selector, _ := fields.ParseSelector(opts.FieldSelector)
 	username, _ := selector.RequiresExactMatch("name")
-	d := u.db.Where("name like ? and status = 1", "%"+username+"%").Offset(ol.Offset).Limit(ol.Limit).Order("id desc").Find(&ret.Items).Offset(-1).Limit(-1).Count(&ret.TotalCount)
+	d := u.db.Where("name like ? and status = 1", "%"+username+"%").
+		Offset(ol.Offset).
+		Limit(ol.Limit).
+		Order("id desc").
+		Find(&ret.Items).
+		Offset(-1).
+		Limit(-1).
+		Count(&ret.TotalCount)
 
 	return ret, d.Error
 }
@@ -85,7 +93,15 @@ func (u *users) ListOptional(ctx context.Context, opts metaV1.ListOptions) (*v1.
 		where.Name = username
 	}
 
-	d := u.db.Where(where).Not(whereNot).Offset(ol.Offset).Limit(ol.Limit).Order("id desc").Find(&ret.Items).Offset(-1).Limit(-1).Count(&ret.TotalCount)
+	d := u.db.Where(where).
+		Not(whereNot).
+		Offset(ol.Offset).
+		Limit(ol.Limit).
+		Order("id desc").
+		Find(&ret.Items).
+		Offset(-1).
+		Limit(-1).
+		Count(&ret.TotalCount)
 
 	return ret, d.Error
 }

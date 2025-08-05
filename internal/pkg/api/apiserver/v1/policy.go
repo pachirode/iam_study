@@ -16,14 +16,14 @@ type AuthzPolicy struct {
 }
 
 type Policy struct {
-	metaV1.ObjectMeta `json:"metaData,omitempty"`
-	Username          string      `json:"username" gorm:"column:username" validate:"omitempty"`
-	Policy            AuthzPolicy `json:"policy,omitempty" gorm:"-" validate:"omitempty"`
-	PolicyShadow      string      `json:"-" gorm:"column:policyShadow" validate:"omitempty"`
+	metaV1.ObjectMeta `            json:"metaData,omitempty"`
+	Username          string      `json:"username"           gorm:"column:username"     validate:"omitempty"`
+	Policy            AuthzPolicy `json:"policy,omitempty"   gorm:"-"                   validate:"omitempty"`
+	PolicyShadow      string      `json:"-"                  gorm:"column:policyShadow" validate:"omitempty"`
 }
 
 type PolicyList struct {
-	metaV1.ListMeta `json:",inline"`
+	metaV1.ListMeta `          json:",inline"`
 	Items           []*Policy `json:"items"`
 }
 

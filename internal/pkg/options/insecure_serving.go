@@ -5,8 +5,9 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/pachirode/iam_study/internal/pkg/server"
 	"github.com/spf13/pflag"
+
+	"github.com/pachirode/iam_study/internal/pkg/server"
 )
 
 type InsecureServingOptions struct {

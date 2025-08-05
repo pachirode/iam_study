@@ -3,10 +3,11 @@ package idutil
 import (
 	"crypto/rand"
 
-	"github.com/pachirode/iam_study/pkg/utils/iputil"
-	"github.com/pachirode/iam_study/pkg/utils/stringutil"
 	"github.com/sony/sonyflake"
 	hashIds "github.com/speps/go-hashids"
+
+	"github.com/pachirode/iam_study/pkg/utils/iputil"
+	"github.com/pachirode/iam_study/pkg/utils/stringutil"
 )
 
 const (

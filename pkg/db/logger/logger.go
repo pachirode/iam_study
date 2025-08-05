@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/pachirode/iam_study/pkg/log"
 	gormLogger "gorm.io/gorm/logger"
+
+	"github.com/pachirode/iam_study/pkg/log"
 )
 
 const (

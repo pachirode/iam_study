@@ -10,12 +10,13 @@ import (
 
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
+	ginPrometheus "github.com/zsais/go-gin-prometheus"
+	"golang.org/x/sync/errgroup"
+
 	"github.com/pachirode/iam_study/internal/pkg/middleware"
 	"github.com/pachirode/iam_study/pkg/core"
 	"github.com/pachirode/iam_study/pkg/log"
 	"github.com/pachirode/iam_study/pkg/version"
-	ginPrometheus "github.com/zsais/go-gin-prometheus"
-	"golang.org/x/sync/errgroup"
 )
 
 type GenericAPIServer struct {
@@ -98,7 +99,10 @@ func (server *GenericAPIServer) Run() error {
 	var eg errgroup.Group
 
 	eg.Go(func() error {
-		log.Infof("Start to listening the incoming requests on the http address: %s", server.InsecureServingInfo.Address)
+		log.Infof(
+			"Start to listening the incoming requests on the http address: %s",
+			server.InsecureServingInfo.Address,
+		)
 
 		if err := server.insecureServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatal(err.Error())
@@ -118,7 +122,8 @@ func (server *GenericAPIServer) Run() error {
 
 		log.Infof("Start to listening the incoming requests on https address: %s", server.SecureServingInfo.Address())
 
-		if err := server.secureServer.ListenAndServeTLS(cert, key); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		if err := server.secureServer.ListenAndServeTLS(cert, key); err != nil &&
+			!errors.Is(err, http.ErrServerClosed) {
 			log.Fatal(err.Error())
 
 			return err

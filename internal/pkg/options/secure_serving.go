@@ -5,8 +5,9 @@ import (
 	"net"
 	"path"
 
-	"github.com/pachirode/iam_study/internal/pkg/server"
 	"github.com/spf13/pflag"
+
+	"github.com/pachirode/iam_study/internal/pkg/server"
 )
 
 type SecureServingOptions struct {
@@ -22,7 +23,7 @@ type CertKey struct {
 }
 
 type GeneratableKeyCert struct {
-	CertKey       CertKey `json:"cert-key" mapstructure:"cert-key"`
+	CertKey       CertKey `json:"cert-key"  mapstructure:"cert-key"`
 	CertDirectory string  `json:"cert-dir"  mapstructure:"cert-dir"`
 	PairName      string  `json:"pair-name" mapstructure:"pair-name"`
 }

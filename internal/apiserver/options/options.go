@@ -10,12 +10,12 @@ import (
 )
 
 type Options struct {
-	GenericServerRunOptions *genericOptions.ServerRunOptions       `json:"server" mapstructure:"server"`
+	GenericServerRunOptions *genericOptions.ServerRunOptions       `json:"server"   mapstructure:"server"`
 	InsecureServing         *genericOptions.InsecureServingOptions `json:"insecure" mapstructure:"insecure"`
-	SecureServing           *genericOptions.SecureServingOptions   `json:"secure" mapstructure:"sercure"`
-	MySQLOptions            *genericOptions.MySQLOptions           `json:"mysql" mapstructure:"mysql"`
-	Log                     *log.Options                           `json:"log" mapstructure:"log"`
-	FeatureOptions          *genericOptions.FeatureOptions         `json:"feature" mapstructure:"feature"`
+	SecureServing           *genericOptions.SecureServingOptions   `json:"secure"   mapstructure:"sercure"`
+	MySQLOptions            *genericOptions.MySQLOptions           `json:"mysql"    mapstructure:"mysql"`
+	Log                     *log.Options                           `json:"log"      mapstructure:"log"`
+	FeatureOptions          *genericOptions.FeatureOptions         `json:"feature"  mapstructure:"feature"`
 }
 
 func NewOptions() *Options {

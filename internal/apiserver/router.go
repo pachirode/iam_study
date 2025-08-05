@@ -2,6 +2,7 @@ package apiserver
 
 import (
 	"github.com/gin-gonic/gin"
+
 	"github.com/pachirode/iam_study/internal/apiserver/controller/v1/user"
 	"github.com/pachirode/iam_study/internal/apiserver/store/mysql"
 	"github.com/pachirode/iam_study/internal/pkg/code"

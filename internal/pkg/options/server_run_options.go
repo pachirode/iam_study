@@ -1,13 +1,14 @@
 package options
 
 import (
-	"github.com/pachirode/iam_study/internal/pkg/server"
 	"github.com/spf13/pflag"
+
+	"github.com/pachirode/iam_study/internal/pkg/server"
 )
 
 type ServerRunOptions struct {
-	Mode        string   `json:"mode" mapstructure:"mode"`
-	Healthz     bool     `json:"healthz" mapstructure:"healthz"`
+	Mode        string   `json:"mode"        mapstructure:"mode"`
+	Healthz     bool     `json:"healthz"     mapstructure:"healthz"`
 	Middlewares []string `json:"middlewares" mapstructure:"middlewares"`
 }
 
@@ -36,7 +37,22 @@ func (opt *ServerRunOptions) Validate() []error {
 }
 
 func (opt *ServerRunOptions) AddFlags(flagSet *pflag.FlagSet) {
-	flagSet.StringVar(&opt.Mode, "server.mode", opt.Mode, "Start server in specified mode. Support: debug, test, release.")
-	flagSet.BoolVar(&opt.Healthz, "server.healthz", opt.Healthz, "Add self readiness check and install /healthz router.")
-	flagSet.StringSliceVar(&opt.Middlewares, "server.middlewares", opt.Middlewares, "List of allowed middlewares for server, if empty use default.")
+	flagSet.StringVar(
+		&opt.Mode,
+		"server.mode",
+		opt.Mode,
+		"Start server in specified mode. Support: debug, test, release.",
+	)
+	flagSet.BoolVar(
+		&opt.Healthz,
+		"server.healthz",
+		opt.Healthz,
+		"Add self readiness check and install /healthz router.",
+	)
+	flagSet.StringSliceVar(
+		&opt.Middlewares,
+		"server.middlewares",
+		opt.Middlewares,
+		"List of allowed middlewares for server, if empty use default.",
+	)
 }

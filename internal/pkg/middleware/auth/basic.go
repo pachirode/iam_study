@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/pachirode/iam_study/internal/pkg/code"
 	"github.com/pachirode/iam_study/internal/pkg/middleware"
 	"github.com/pachirode/iam_study/pkg/core"
@@ -28,7 +29,11 @@ func (b BasicStrategy) AuthFunc() gin.HandlerFunc {
 		auth := strings.SplitN(ctx.Request.Header.Get("Authorization"), " ", 2)
 
 		if len(auth) != 2 || auth[0] != "Basic" {
-			core.WriteResponse(ctx, errors.WithCode(code.ErrSignatureInvalid, "Authorization header format is wrong."), nil)
+			core.WriteResponse(
+				ctx,
+				errors.WithCode(code.ErrSignatureInvalid, "Authorization header format is wrong."),
+				nil,
+			)
 			ctx.Abort()
 
 			return
@@ -38,7 +43,11 @@ func (b BasicStrategy) AuthFunc() gin.HandlerFunc {
 		pair := strings.SplitN(string(payload), ":", 2)
 
 		if len(pair) != 2 || !b.compare(pair[0], pair[1]) {
-			core.WriteResponse(ctx, errors.WithCode(code.ErrSignatureInvalid, "Authorization header format is wrong."), nil)
+			core.WriteResponse(
+				ctx,
+				errors.WithCode(code.ErrSignatureInvalid, "Authorization header format is wrong."),
+				nil,
+			)
 			ctx.Abort()
 
 			return

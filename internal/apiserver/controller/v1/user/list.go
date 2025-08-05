@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
+
 	"github.com/pachirode/iam_study/internal/pkg/code"
 	"github.com/pachirode/iam_study/pkg/core"
 	"github.com/pachirode/iam_study/pkg/errors"

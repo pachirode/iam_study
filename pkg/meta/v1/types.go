@@ -38,13 +38,13 @@ type ListMeta struct {
 }
 
 type ObjectMeta struct {
-	ID           uint64    `json:"id,omitempty" gorm:"primary_key;AUTO_INCREMENT;column:id"`
+	ID           uint64    `json:"id,omitempty"         gorm:"primary_key;AUTO_INCREMENT;column:id"`
 	InstanceID   string    `json:"instanceID,omitempty" gorm:"unqiue;column:instanceID;type:varchar(32);not null"`
-	Name         string    `json:"name,omitempty" gorm:"column:name;type:varchar(64);not null" validate:"name"`
-	Extend       Extend    `json:"extend,omitempty" gorm:"-" validate:"omitempty"`
-	ExtendShadow string    `json:"-" gorm:"column:extendShadow" validate:"omitempty"`
-	CreatedAt    time.Time `json:"createdAt,omitempty" gorm:"column:createdAt"`
-	UpdatedAt    time.Time `json:"updatedAt,omitempty" gorm:"column:updatedAt"`
+	Name         string    `json:"name,omitempty"       gorm:"column:name;type:varchar(64);not null"              validate:"name"`
+	Extend       Extend    `json:"extend,omitempty"     gorm:"-"                                                  validate:"omitempty"`
+	ExtendShadow string    `json:"-"                    gorm:"column:extendShadow"                                validate:"omitempty"`
+	CreatedAt    time.Time `json:"createdAt,omitempty"  gorm:"column:createdAt"`
+	UpdatedAt    time.Time `json:"updatedAt,omitempty"  gorm:"column:updatedAt"`
 }
 
 func (obj *ObjectMeta) BeforeCreate(gdb *gorm.DB) error {
@@ -68,16 +68,16 @@ func (obj *ObjectMeta) AfterFind(gdb *gorm.DB) error {
 }
 
 type ListOptions struct {
-	TypeMeta       `json:",inline"`
-	LabelSelector  string `json:"labelSelector,omitempty" form:"labelSelector"`
-	FieldSelector  string `json:"fieldSelector,omitempty" form:"fieldSelector"`
+	TypeMeta       `       json:",inline"`
+	LabelSelector  string `json:"labelSelector,omitempty"  form:"labelSelector"`
+	FieldSelector  string `json:"fieldSelector,omitempty"  form:"fieldSelector"`
 	TimeoutSeconds *int64 `json:"timeoutSeconds,omitempty"`
-	Offset         *int64 `json:"offset,omitempty" form:"offset"`
-	Limit          *int64 `json:"limit,omitempty" form:"limit"`
+	Offset         *int64 `json:"offset,omitempty"         form:"offset"`
+	Limit          *int64 `json:"limit,omitempty"          form:"limit"`
 }
 
 type ExportOptions struct {
-	TypeMeta `json:",inline"`
+	TypeMeta `     json:",inline"`
 	Export   bool `json:"export"`
 	Exact    bool `json:"exact"`
 }
@@ -87,23 +87,23 @@ type GetOptions struct {
 }
 
 type DeleteOptions struct {
-	TypeMeta `json:",inline"`
+	TypeMeta `     json:",inline"`
 	Unscoped bool `json:"unscoped"`
 }
 
 type CreateOptions struct {
-	TypeMeta `json:",inline"`
+	TypeMeta `         json:",inline"`
 	DryRun   []string `json:"dryRun,omitempty"`
 }
 
 type PatchOptions struct {
-	TypeMeta `json:",inline"`
+	TypeMeta `         json:",inline"`
 	DryRun   []string `json:"dryRun,omitempty"`
 	Force    bool     `json:"force,omitempty"`
 }
 
 type UpdateOptions struct {
-	TypeMeta `json:",inline"`
+	TypeMeta `         json:",inline"`
 	DryRun   []string `json:"dryRun,omitempty"`
 }
 
@@ -112,6 +112,6 @@ type AuthorizeOptions struct {
 }
 
 type TableOptions struct {
-	TypeMeta  `json:",inline"`
+	TypeMeta  `     json:",inline"`
 	NoHeaders bool `json:"-"`
 }

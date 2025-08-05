@@ -3,9 +3,10 @@ package options
 import (
 	"time"
 
-	"github.com/pachirode/iam_study/pkg/db"
 	"github.com/spf13/pflag"
 	"gorm.io/gorm"
+
+	"github.com/pachirode/iam_study/pkg/db"
 )
 
 type MySQLOptions struct {

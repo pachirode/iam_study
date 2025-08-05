@@ -4,9 +4,10 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/spf13/viper"
+
 	"github.com/pachirode/iam_study/pkg/log"
 	"github.com/pachirode/iam_study/pkg/utils/homedir"
-	"github.com/spf13/viper"
 )
 
 func LoadConfig(cfg string, defaultName string) {

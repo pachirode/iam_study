@@ -6,6 +6,7 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go/v4"
 	"github.com/gin-gonic/gin"
+
 	"github.com/pachirode/iam_study/internal/pkg/code"
 	"github.com/pachirode/iam_study/internal/pkg/middleware"
 	"github.com/pachirode/iam_study/pkg/core"
@@ -38,7 +39,11 @@ func (cache CacheStrategy) AuthFunc() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		header := ctx.Request.Header.Get("Authorization")
 		if len(header) == 0 {
-			core.WriteResponse(ctx, errors.WithCode(code.ErrMissingHeader, "Authorization header can not be empty."), nil)
+			core.WriteResponse(
+				ctx,
+				errors.WithCode(code.ErrMissingHeader, "Authorization header can not be empty."),
+				nil,
+			)
 			ctx.Abort()
 
 			return

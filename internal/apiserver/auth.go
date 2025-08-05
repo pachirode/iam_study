@@ -7,12 +7,13 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
+
 	"github.com/pachirode/iam_study/internal/apiserver/store"
 	"github.com/pachirode/iam_study/internal/pkg/middleware"
 	"github.com/pachirode/iam_study/internal/pkg/middleware/auth"
 	"github.com/pachirode/iam_study/pkg/log"
 	metaV1 "github.com/pachirode/iam_study/pkg/meta/v1"
-	"github.com/spf13/viper"
 )
 
 const (

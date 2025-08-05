@@ -15,7 +15,13 @@ var cfgFile string
 
 // nolint: gochecknoinits
 func init() {
-	pflag.StringVarP(&cfgFile, "config", "c", cfgFile, "Read configuration from specified `FILE`, "+"support JSON, TOML, YAML, HCL, or Java properties formats.")
+	pflag.StringVarP(
+		&cfgFile,
+		"config",
+		"c",
+		cfgFile,
+		"Read configuration from specified `FILE`, "+"support JSON, TOML, YAML, HCL, or Java properties formats.",
+	)
 }
 
 func addConfigFlag(basename string, fs *pflag.FlagSet) {

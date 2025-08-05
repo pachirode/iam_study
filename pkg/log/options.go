@@ -26,15 +26,15 @@ const (
 )
 
 type Options struct {
-	Development       bool     `json:"development" mapstructure:"development"`
-	DisableCaller     bool     `json:"disable-caller" mapstructure:"disable-caller"`
+	Development       bool     `json:"development"        mapstructure:"development"`
+	DisableCaller     bool     `json:"disable-caller"     mapstructure:"disable-caller"`
 	DisableStacktrace bool     `json:"disable-stacktrace" mapstructure:"disable-stacktrace"`
 	ErrorOutputPaths  []string `json:"error-output-paths" mapstructure:"error-output-paths"`
-	EnableColor       bool     `json:"enable-color" mapstructure:"enable-color"`
-	Format            string   `json:"format" mapstructure:"format"`
-	Level             string   `json:"level" mapstructure:"level"`
-	Name              string   `json:"name" mapstructure:"name"`
-	OutputPaths       []string `json:"output-paths" mapstructure:"output-paths"`
+	EnableColor       bool     `json:"enable-color"       mapstructure:"enable-color"`
+	Format            string   `json:"format"             mapstructure:"format"`
+	Level             string   `json:"level"              mapstructure:"level"`
+	Name              string   `json:"name"               mapstructure:"name"`
+	OutputPaths       []string `json:"output-paths"       mapstructure:"output-paths"`
 }
 
 func NewOptions() *Options {
@@ -69,7 +69,12 @@ func (o *Options) Validate() []error {
 func (o *Options) AddFlags(fs *pflag.FlagSet) {
 	fs.StringVar(&o.Level, flagLevel, o.Level, "Minimum log Level.")
 	fs.BoolVar(&o.DisableCaller, flagDisableCaller, o.DisableCaller, "Disable output of caller information in the log.")
-	fs.BoolVar(&o.DisableStacktrace, flagDisableStacktrace, o.DisableStacktrace, "Disable the log to record a stack trace for message or above panic level.")
+	fs.BoolVar(
+		&o.DisableStacktrace,
+		flagDisableStacktrace,
+		o.DisableStacktrace,
+		"Disable the log to record a stack trace for message or above panic level.",
+	)
 	fs.StringVar(&o.Format, flagFormat, o.Format, "Log output format, support plain or json format.")
 	fs.BoolVar(&o.EnableColor, flagEnableColor, o.EnableColor, "Enable output ansi color in plain logs")
 	fs.StringSliceVar(&o.OutputPaths, flagOutputPaths, o.OutputPaths, "Output paths of log")

@@ -1,0 +1,311 @@
+basePath: /v1
+consumes:
+    - application/json
+definitions:
+    ChangePasswordRequest:
+        properties:
+            newPassword:
+                type: string
+                x-go-name: NewPassword
+            oldPassword:
+                type: string
+                x-go-name: OldPassword
+        type: object
+        x-go-package: github.com/pachirode/iam_study/internal/apiserver/controller/v1/user
+    ErrResponse:
+        properties:
+            code:
+                format: int64
+                type: integer
+                x-go-name: Code
+            message:
+                type: string
+                x-go-name: Message
+            reference:
+                type: string
+                x-go-name: Reference
+        type: object
+        x-go-package: github.com/pachirode/iam_study/pkg/core
+    Extend:
+        additionalProperties: {}
+        description: Extend define a new type to store filed
+        type: object
+        x-go-package: github.com/pachirode/iam_study/pkg/meta/v1
+    User:
+        properties:
+            createdAt:
+                format: date-time
+                type: string
+                x-go-name: CreatedAt
+            email:
+                type: string
+                x-go-name: Email
+            extend:
+                $ref: '#/definitions/Extend'
+            id:
+                format: uint64
+                type: integer
+                x-go-name: ID
+            instanceID:
+                type: string
+                x-go-name: InstanceID
+            isAdmin:
+                format: int64
+                type: integer
+                x-go-name: IsAdmin
+            loginAt:
+                format: date-time
+                type: string
+                x-go-name: LoginAt
+            name:
+                type: string
+                x-go-name: Name
+            nickname:
+                type: string
+                x-go-name: Nickname
+            password:
+                type: string
+                x-go-name: Password
+            phone:
+                type: string
+                x-go-name: Phone
+            status:
+                format: int64
+                type: integer
+                x-go-name: Status
+            totalPolicy:
+                format: int64
+                type: integer
+                x-go-name: TotalPolicy
+            updatedAt:
+                format: date-time
+                type: string
+                x-go-name: UpdatedAt
+        type: object
+        x-go-package: github.com/pachirode/iam_study/internal/pkg/api/apiserver/v1
+    UserList:
+        properties:
+            items:
+                items:
+                    $ref: '#/definitions/User'
+                type: array
+                x-go-name: Items
+            totalCount:
+                format: int64
+                type: integer
+                x-go-name: TotalCount
+        type: object
+        x-go-package: github.com/pachirode/iam_study/internal/pkg/api/apiserver/v1
+info:
+    description: Identity and Access Management System.
+    license:
+        name: MIT
+        url: https://opensource.org/licenses/MIT
+    title: IAM API Server API.
+    version: 1.0.0
+paths:
+    /users:
+        delete:
+            description: Delete users
+            operationId: deleteUserCollectionRequest
+            parameters:
+                - in: query
+                  items:
+                    type: string
+                  name: name
+                  type: array
+                  x-go-name: Names
+            responses:
+                "200":
+                    $ref: '#/responses/okResponse'
+                default:
+                    $ref: '#/responses/errResponse'
+            security:
+                - api_key: []
+            summary: Batch delete user.
+            tags:
+                - users
+        get:
+            description: List users.
+            operationId: listUserRequest
+            parameters:
+                - in: query
+                  name: kind
+                  type: string
+                  x-go-name: Kind
+                - in: query
+                  name: apiVersion
+                  type: string
+                  x-go-name: APIVersion
+                - in: query
+                  name: labelSelector
+                  type: string
+                  x-go-name: LabelSelector
+                - in: query
+                  name: fieldSelector
+                  type: string
+                  x-go-name: FieldSelector
+                - format: int64
+                  in: query
+                  name: timeoutSeconds
+                  type: integer
+                  x-go-name: TimeoutSeconds
+                - format: int64
+                  in: query
+                  name: offset
+                  type: integer
+                  x-go-name: Offset
+                - format: int64
+                  in: query
+                  name: limit
+                  type: integer
+                  x-go-name: Limit
+            responses:
+                "200":
+                    $ref: '#/responses/listUserResponse'
+                default:
+                    $ref: '#/responses/errResponse'
+            summary: List users.
+            tags:
+                - users
+        post:
+            description: Create users according to input parameters
+            operationId: createUserRequest
+            parameters:
+                - description: User information.
+                  in: body
+                  name: Body
+                  schema:
+                    $ref: '#/definitions/User'
+            responses:
+                "200":
+                    $ref: '#/responses/createUserResponse'
+                default:
+                    $ref: '#/responses/errResponse'
+            security:
+                - api_key: []
+            summary: Create users
+            tags:
+                - users
+    /users/{name}:
+        delete:
+            description: Delete user according to input parameters.
+            operationId: deleteUserRequest
+            parameters:
+                - description: User name.
+                  in: path
+                  name: name
+                  required: true
+                  type: string
+                  x-go-name: Name
+            responses:
+                "200":
+                    $ref: '#/responses/okResponse'
+                default:
+                    $ref: '#/responses/errResponse'
+            summary: DElete user.
+            tags:
+                - users
+        get:
+            description: Get details for specified user according to input parameters.
+            operationId: getUserRequest
+            parameters:
+                - description: User name.
+                  in: path
+                  name: name
+                  required: true
+                  type: string
+                  x-go-name: Name
+            responses:
+                "200":
+                    $ref: '#/responses/getUserResponse'
+                default:
+                    $ref: '#/responses/errResponse'
+            summary: Get details for specified user.
+            tags:
+                - users
+        put:
+            description: Update user according to input parameters.
+            operationId: updateUserRequest
+            parameters:
+                - description: User information.
+                  in: body
+                  name: Body
+                  schema:
+                    $ref: '#/definitions/User'
+                - description: User name.
+                  in: path
+                  name: name
+                  required: true
+                  type: string
+                  x-go-name: Name
+            responses:
+                "200":
+                    $ref: '#/responses/updateUserResponse'
+                default:
+                    $ref: '#/responses/errResponse'
+            security:
+                - api_key: []
+            summary: Update user.
+            tags:
+                - users
+    /users/{name}/change_password:
+        put:
+            description: Change user password.
+            operationId: changePasswordRequest
+            parameters:
+                - in: query
+                  name: name
+                  type: string
+                  x-go-name: Name
+                - $ref: '#/definitions/ChangePasswordRequest'
+                  in: query
+                  name: Body
+            responses:
+                "200":
+                    $ref: '#/responses/okResponse'
+                default:
+                    $ref: '#/responses/errResponse'
+            security:
+                - api_key: []
+            summary: Change user password.
+            tags:
+                - users
+produces:
+    - application/json
+responses:
+    createUserResponse:
+        description: User response.
+        schema:
+            $ref: '#/definitions/User'
+    errResponse:
+        description: ErrResponse defines the return messages when an error occurred.
+        schema:
+            $ref: '#/definitions/ErrResponse'
+    getUserResponse:
+        description: User response.
+        schema:
+            $ref: '#/definitions/User'
+    listUserResponse:
+        description: list users response.
+        headers:
+            Body: {}
+        schema:
+            $ref: '#/definitions/UserList'
+    okResponse:
+        description: Return nil json object.
+    updateUserResponse:
+        description: User response.
+        schema:
+            $ref: '#/definitions/User'
+schemes:
+    - http
+    - https
+securityDefinitions:
+    api_key:
+        in: header
+        name: Authorization
+        type: apiKey
+    basic:
+        type: basic
+swagger: "2.0"

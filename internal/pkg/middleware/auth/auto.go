@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/pachirode/iam_study/internal/pkg/code"
 	"github.com/pachirode/iam_study/internal/pkg/middleware"
 	"github.com/pachirode/iam_study/pkg/core"
@@ -32,7 +33,11 @@ func (a AutoStrategy) AuthFunc() gin.HandlerFunc {
 		authHeader := strings.SplitN(ctx.Request.Header.Get("Authorization"), " ", 2)
 
 		if len(authHeader) != authHeaderCount {
-			core.WriteResponse(ctx, errors.WithCode(code.ErrInvalidAuthHeader, "Authorization header format is wrong."), nil)
+			core.WriteResponse(
+				ctx,
+				errors.WithCode(code.ErrInvalidAuthHeader, "Authorization header format is wrong."),
+				nil,
+			)
 			ctx.Abort()
 
 			return
@@ -44,7 +49,11 @@ func (a AutoStrategy) AuthFunc() gin.HandlerFunc {
 		case "Bearer":
 			operator.SetStrategy(a.jwt)
 		default:
-			core.WriteResponse(ctx, errors.WithCode(code.ErrInvalidAuthHeader, "Unrecognized Authorization header."), nil)
+			core.WriteResponse(
+				ctx,
+				errors.WithCode(code.ErrInvalidAuthHeader, "Unrecognized Authorization header."),
+				nil,
+			)
 			ctx.Abort()
 			return
 		}

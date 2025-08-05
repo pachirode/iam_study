@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"sync"
 
+	"gorm.io/gorm"
+
 	"github.com/pachirode/iam_study/internal/apiserver/store"
 	"github.com/pachirode/iam_study/pkg/db"
 	"github.com/pachirode/iam_study/pkg/errors"
-	"gorm.io/gorm"
 
 	v1 "github.com/pachirode/iam_study/internal/pkg/api/apiserver/v1"
 	genericOptions "github.com/pachirode/iam_study/internal/pkg/options"

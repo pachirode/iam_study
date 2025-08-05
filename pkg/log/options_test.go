@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/pachirode/iam_study/pkg/log"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/pachirode/iam_study/pkg/log"
 )
 
 func TestOptions(t *testing.T) {

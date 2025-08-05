@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/pachirode/iam_study/pkg/log/klog"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+
+	"github.com/pachirode/iam_study/pkg/log/klog"
 )
 
 type InfoLogger interface {

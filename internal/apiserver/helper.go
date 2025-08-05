@@ -8,6 +8,7 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
+
 	"github.com/pachirode/iam_study/internal/apiserver/config"
 	v1 "github.com/pachirode/iam_study/internal/pkg/api/apiserver/v1"
 	genericApiServer "github.com/pachirode/iam_study/internal/pkg/server"

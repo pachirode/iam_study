@@ -37,5 +37,10 @@ func addHelpFlag(name string, fs *pflag.FlagSet) {
 }
 
 func addHelpCommandFlag(usage string, fs *pflag.FlagSet) {
-	fs.BoolP(flagHelp, flagHelpShorthand, false, fmt.Sprintf("Help for the %s command.", color.GreenString(strings.Split(usage, " ")[0])))
+	fs.BoolP(
+		flagHelp,
+		flagHelpShorthand,
+		false,
+		fmt.Sprintf("Help for the %s command.", color.GreenString(strings.Split(usage, " ")[0])),
+	)
 }
