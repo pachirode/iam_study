@@ -3,6 +3,10 @@ package apiserver
 import (
 	"context"
 
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/reflection"
+
 	"github.com/pachirode/iam_study/internal/apiserver/config"
 	cacheV1 "github.com/pachirode/iam_study/internal/apiserver/controller/v1/cache"
 	"github.com/pachirode/iam_study/internal/apiserver/store"
@@ -14,9 +18,6 @@ import (
 	"github.com/pachirode/iam_study/pkg/shutdown"
 	"github.com/pachirode/iam_study/pkg/shutdown/shutdown_managers/posixsignal"
 	"github.com/pachirode/iam_study/pkg/storage"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/reflection"
 )
 
 type apiServer struct {
@@ -106,7 +107,10 @@ func (config *ExtraConfig) complete() *completedExtraConfig {
 }
 
 func (config *completedExtraConfig) New() (*grpcAPIServer, error) {
-	creds, err := credentials.NewServerTLSFromFile(config.ServerCert.CertKey.CertFile, config.ServerCert.CertKey.KeyFile)
+	creds, err := credentials.NewServerTLSFromFile(
+		config.ServerCert.CertKey.CertFile,
+		config.ServerCert.CertKey.KeyFile,
+	)
 	if err != nil {
 		log.Fatalf("Failed to generate credentials %s", grpc.Creds(creds))
 	}

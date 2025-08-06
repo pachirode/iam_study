@@ -12,12 +12,12 @@ import (
 
 type Options struct {
 	GenericServerRunOptions *genericOptions.ServerRunOptions       `json:"server"   mapstructure:"server"`
-	GRPCOptions             *genericOptions.GRPCOptions            `json:"grpc" mapstructure:"grpc"`
+	GRPCOptions             *genericOptions.GRPCOptions            `json:"grpc"     mapstructure:"grpc"`
 	InsecureServing         *genericOptions.InsecureServingOptions `json:"insecure" mapstructure:"insecure"`
 	SecureServing           *genericOptions.SecureServingOptions   `json:"secure"   mapstructure:"sercure"`
 	MySQLOptions            *genericOptions.MySQLOptions           `json:"mysql"    mapstructure:"mysql"`
-	RedisOptions            *genericOptions.RedisOptions           `json:"redis" mapstructure:"redis"`
-	JwtOptions              *genericOptions.JwtOptions             `json:"jwt" mapstructure:"jwt"`
+	RedisOptions            *genericOptions.RedisOptions           `json:"redis"    mapstructure:"redis"`
+	JwtOptions              *genericOptions.JwtOptions             `json:"jwt"      mapstructure:"jwt"`
 	Log                     *log.Options                           `json:"log"      mapstructure:"log"`
 	FeatureOptions          *genericOptions.FeatureOptions         `json:"feature"  mapstructure:"feature"`
 }

@@ -61,3 +61,11 @@ endif
 ifeq ($(origin CERTIFICATES),undefined)
 CERTIFICATES=iam-apiserver
 endif
+
+BLOCKER_TOOLS ?= gsemver golines go-junit-report golangci-lint  goimports codegen
+CRITICAL_TOOLS ?= swagger mockgen gotests git-chglog github-release go-mod-outdated protoc-gen-go cfssl go-gitlint
+TRIVIAL_TOOLS ?= depth go-callvis gothanks richgo rts kube-score
+
+COMMA := ,
+SPACE :=
+SPACE +=

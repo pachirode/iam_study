@@ -3,6 +3,7 @@ module github.com/pachirode/iam_study
 go 1.24
 
 require (
+	github.com/AlekSi/pointer v1.2.0
 	github.com/appleboy/gin-jwt/v2 v2.10.3
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/buger/jsonparser v1.1.1

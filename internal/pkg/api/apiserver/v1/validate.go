@@ -22,3 +22,15 @@ func (u *User) ValidateUpdate() field.ErrorList {
 
 	return allErrs
 }
+
+func (s *Secret) Validate() field.ErrorList {
+	val := validation.NewValidator(s)
+
+	return val.Validate()
+}
+
+func (p *Policy) Validate() field.ErrorList {
+	val := validation.NewValidator(p)
+
+	return val.Validate()
+}

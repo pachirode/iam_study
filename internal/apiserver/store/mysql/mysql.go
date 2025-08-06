@@ -27,6 +27,18 @@ func (ds *dataStore) Users() store.UserStore {
 	return newUsers(ds)
 }
 
+func (ds *dataStore) Secrets() store.SecretStore {
+	return newSecrets(ds)
+}
+
+func (ds *dataStore) Policies() store.PolicyStore {
+	return newPolicies(ds)
+}
+
+func (ds *dataStore) PolicyAudits() store.PolicyAuditStore {
+	return newPolicyAudits(ds)
+}
+
 func (ds *dataStore) Close() error {
 	db, err := ds.db.DB()
 	if err != nil {

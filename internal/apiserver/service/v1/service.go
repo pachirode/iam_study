@@ -6,6 +6,8 @@ import "github.com/pachirode/iam_study/internal/apiserver/store"
 
 type Service interface {
 	Users() UserSrv
+	Secrets() SecretSrv
+	Policies() PolicySrv
 }
 
 type service struct {
@@ -20,4 +22,12 @@ func NewService(store store.Factory) Service {
 
 func (s *service) Users() UserSrv {
 	return newUsers(s)
+}
+
+func (s *service) Secrets() SecretSrv {
+	return newSecrets(s)
+}
+
+func (s *service) Policies() PolicySrv {
+	return newPolicies(s)
 }
