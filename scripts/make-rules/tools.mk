@@ -87,7 +87,3 @@ install.rts:
 install.kube-score:
 	@$(GO) install github.com/zegl/kube-score/cmd/kube-score@latest
 
-.PHONY: install.go-gitlint
-install.go-gitlint:
-	@$(GO) install github.com/marmotedu/go-gitlint/cmd/go-gitlint@latest
-

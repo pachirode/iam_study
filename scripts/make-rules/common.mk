@@ -57,3 +57,7 @@ XARGS := xargs --no-run-if-empty
 ifndef v
 MAKEFLAGS += --no-print-directory
 endif
+
+ifeq ($(origin CERTIFICATES),undefined)
+CERTIFICATES=iam-apiserver
+endif
