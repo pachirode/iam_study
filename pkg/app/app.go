@@ -188,18 +188,6 @@ func (app *App) buildCommand() {
 			cobraComand.Flags().AddFlagSet(flagSet)
 		}
 
-		usageFmt := "Usage:\n %s\n"
-		cols, _, _ := term.TerminalSize(cobraComand.OutOrStdout())
-		cobraComand.SetHelpFunc(func(cmd *cobra.Command, args []string) {
-			fmt.Fprintf(cmd.OutOrStdout(), "%s\n\n"+usageFmt, cmd.Long, cmd.UseLine())
-			flags.PrintSections(cmd.OutOrStdout(), namedFlagSets, cols)
-		})
-		cobraComand.SetUsageFunc(func(cmd *cobra.Command) error {
-			fmt.Fprintf(cmd.OutOrStderr(), usageFmt, cmd.UseLine())
-			flags.PrintSections(cmd.OutOrStderr(), namedFlagSets, cols)
-
-			return nil
-		})
 	}
 
 	if !app.noVersion {
@@ -211,6 +199,18 @@ func (app *App) buildCommand() {
 	}
 
 	flags.AddGlobalFlags(namedFlagSets.GetFlagSet("global"), cobraComand.Name())
+	usageFmt := "Usage:\n %s\n"
+	cols, _, _ := term.TerminalSize(cobraComand.OutOrStdout())
+	cobraComand.SetHelpFunc(func(cmd *cobra.Command, args []string) {
+		fmt.Fprintf(cmd.OutOrStdout(), "%s\n\n"+usageFmt, cmd.Long, cmd.UseLine())
+		flags.PrintSections(cmd.OutOrStdout(), namedFlagSets, cols)
+	})
+	cobraComand.SetUsageFunc(func(cmd *cobra.Command) error {
+		fmt.Fprintf(cmd.OutOrStderr(), usageFmt, cmd.UseLine())
+		flags.PrintSections(cmd.OutOrStderr(), namedFlagSets, cols)
+
+		return nil
+	})
 	app.cmd = &cobraComand
 }
 

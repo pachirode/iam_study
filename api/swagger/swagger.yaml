@@ -2,6 +2,42 @@ basePath: /v1
 consumes:
     - application/json
 definitions:
+    AuthzPolicy:
+        properties:
+            actions:
+                items:
+                    type: string
+                type: array
+                x-go-name: Actions
+            conditions:
+                $ref: '#/definitions/Conditions'
+            description:
+                type: string
+                x-go-name: Description
+            effect:
+                type: string
+                x-go-name: Effect
+            id:
+                type: string
+                x-go-name: ID
+            meta:
+                items:
+                    format: uint8
+                    type: integer
+                type: array
+                x-go-name: Meta
+            resources:
+                items:
+                    type: string
+                type: array
+                x-go-name: Resources
+            subjects:
+                items:
+                    type: string
+                type: array
+                x-go-name: Subjects
+        type: object
+        x-go-package: github.com/pachirode/iam_study/internal/pkg/api/apiserver/v1
     ChangePasswordRequest:
         properties:
             newPassword:
@@ -12,6 +48,20 @@ definitions:
                 x-go-name: OldPassword
         type: object
         x-go-package: github.com/pachirode/iam_study/internal/apiserver/controller/v1/user
+    Condition:
+        properties:
+            GetName:
+                description: GetName returns the condition's name.
+                type: string
+        title: Condition either do or do not fulfill an access request.
+        type: object
+        x-go-package: github.com/ory/ladon
+    Conditions:
+        additionalProperties:
+            $ref: '#/definitions/Condition'
+        title: Conditions is a collection of conditions.
+        type: object
+        x-go-package: github.com/ory/ladon
     ErrResponse:
         properties:
             code:
@@ -31,6 +81,101 @@ definitions:
         description: Extend define a new type to store filed
         type: object
         x-go-package: github.com/pachirode/iam_study/pkg/meta/v1
+    Policy:
+        properties:
+            createdAt:
+                format: date-time
+                type: string
+                x-go-name: CreatedAt
+            extend:
+                $ref: '#/definitions/Extend'
+            id:
+                format: uint64
+                type: integer
+                x-go-name: ID
+            instanceID:
+                type: string
+                x-go-name: InstanceID
+            name:
+                type: string
+                x-go-name: Name
+            policy:
+                $ref: '#/definitions/AuthzPolicy'
+            updatedAt:
+                format: date-time
+                type: string
+                x-go-name: UpdatedAt
+            username:
+                type: string
+                x-go-name: Username
+        type: object
+        x-go-package: github.com/pachirode/iam_study/internal/pkg/api/apiserver/v1
+    PolicyList:
+        properties:
+            items:
+                items:
+                    $ref: '#/definitions/Policy'
+                type: array
+                x-go-name: Items
+            totalCount:
+                format: int64
+                type: integer
+                x-go-name: TotalCount
+        type: object
+        x-go-package: github.com/pachirode/iam_study/internal/pkg/api/apiserver/v1
+    Secret:
+        properties:
+            createdAt:
+                format: date-time
+                type: string
+                x-go-name: CreatedAt
+            description:
+                type: string
+                x-go-name: Description
+            expires:
+                format: int64
+                type: integer
+                x-go-name: Expires
+            extend:
+                $ref: '#/definitions/Extend'
+            id:
+                format: uint64
+                type: integer
+                x-go-name: ID
+            instanceID:
+                type: string
+                x-go-name: InstanceID
+            name:
+                type: string
+                x-go-name: Name
+            secretID:
+                type: string
+                x-go-name: SecretID
+            secretKey:
+                type: string
+                x-go-name: SecretKey
+            updatedAt:
+                format: date-time
+                type: string
+                x-go-name: UpdatedAt
+            username:
+                type: string
+                x-go-name: Username
+        type: object
+        x-go-package: github.com/pachirode/iam_study/internal/pkg/api/apiserver/v1
+    SecretList:
+        properties:
+            items:
+                items:
+                    $ref: '#/definitions/Secret'
+                type: array
+                x-go-name: Items
+            totalCount:
+                format: int64
+                type: integer
+                x-go-name: TotalCount
+        type: object
+        x-go-package: github.com/pachirode/iam_study/internal/pkg/api/apiserver/v1
     User:
         properties:
             createdAt:
@@ -104,6 +249,280 @@ info:
     title: IAM API Server API.
     version: 1.0.0
 paths:
+    /policies:
+        delete:
+            description: Batch delete policies according to input parameters.
+            operationId: deletePolicyCollectionRequest
+            parameters:
+                - in: query
+                  items:
+                    type: string
+                  name: name
+                  type: array
+                  x-go-name: Names
+            responses:
+                "200":
+                    $ref: '#/responses/okResponse'
+                default:
+                    $ref: '#/responses/errResponse'
+            security:
+                - api_key: []
+            summary: Batch delete policies.
+            tags:
+                - policies
+        get:
+            description: List policies.
+            operationId: listPolicyRequest
+            parameters:
+                - in: query
+                  name: kind
+                  type: string
+                  x-go-name: Kind
+                - in: query
+                  name: apiVersion
+                  type: string
+                  x-go-name: APIVersion
+                - in: query
+                  name: labelSelector
+                  type: string
+                  x-go-name: LabelSelector
+                - in: query
+                  name: fieldSelector
+                  type: string
+                  x-go-name: FieldSelector
+                - format: int64
+                  in: query
+                  name: timeoutSeconds
+                  type: integer
+                  x-go-name: TimeoutSeconds
+                - format: int64
+                  in: query
+                  name: offset
+                  type: integer
+                  x-go-name: Offset
+                - format: int64
+                  in: query
+                  name: limit
+                  type: integer
+                  x-go-name: Limit
+            responses:
+                "200":
+                    $ref: '#/responses/listPolicyResponse'
+                default:
+                    $ref: '#/responses/errResponse'
+            summary: List policies.
+            tags:
+                - policies
+        post:
+            description: Create policies according to input parameters.
+            operationId: createPolicyRequest
+            parameters:
+                - description: Policy information.
+                  in: body
+                  name: Body
+                  schema:
+                    $ref: '#/definitions/Policy'
+            responses:
+                "200":
+                    $ref: '#/responses/createPolicyResponse'
+                default:
+                    $ref: '#/responses/errResponse'
+            security:
+                - api_key: []
+            summary: Create policies.
+            tags:
+                - policies
+    /policies/{name}:
+        delete:
+            description: Delete policy according to input parameters.
+            operationId: deletePolicyRequest
+            parameters:
+                - description: Policy name.
+                  in: path
+                  name: name
+                  required: true
+                  type: string
+                  x-go-name: Name
+            responses:
+                "200":
+                    $ref: '#/responses/okResponse'
+                default:
+                    $ref: '#/responses/errResponse'
+            security:
+                - api_key: []
+            summary: Delete policy.
+            tags:
+                - policies
+        get:
+            description: Get details for specified policy according to input parameters.
+            operationId: getPolicyRequest
+            parameters:
+                - description: Policy name.
+                  in: path
+                  name: name
+                  required: true
+                  type: string
+                  x-go-name: Name
+            responses:
+                "200":
+                    $ref: '#/responses/getPolicyResponse'
+                default:
+                    $ref: '#/responses/errResponse'
+            summary: Get details for specified policy.
+            tags:
+                - policies
+        put:
+            description: Update policy according to input parameters.
+            operationId: updatePolicyRequest
+            parameters:
+                - description: Policy information.
+                  in: body
+                  name: Body
+                  schema:
+                    $ref: '#/definitions/Policy'
+                - description: Policy name.
+                  in: path
+                  name: name
+                  required: true
+                  type: string
+                  x-go-name: Name
+            responses:
+                "200":
+                    $ref: '#/responses/updatePolicyResponse'
+                default:
+                    $ref: '#/responses/errResponse'
+            security:
+                - api_key: []
+            summary: Update policy.
+            tags:
+                - policies
+    /secrets:
+        get:
+            description: List secrets.
+            operationId: listSecretRequest
+            parameters:
+                - in: query
+                  name: kind
+                  type: string
+                  x-go-name: Kind
+                - in: query
+                  name: apiVersion
+                  type: string
+                  x-go-name: APIVersion
+                - in: query
+                  name: labelSelector
+                  type: string
+                  x-go-name: LabelSelector
+                - in: query
+                  name: fieldSelector
+                  type: string
+                  x-go-name: FieldSelector
+                - format: int64
+                  in: query
+                  name: timeoutSeconds
+                  type: integer
+                  x-go-name: TimeoutSeconds
+                - format: int64
+                  in: query
+                  name: offset
+                  type: integer
+                  x-go-name: Offset
+                - format: int64
+                  in: query
+                  name: limit
+                  type: integer
+                  x-go-name: Limit
+            responses:
+                "200":
+                    $ref: '#/responses/listSecretResponse'
+                default:
+                    $ref: '#/responses/errResponse'
+            summary: List secrets.
+            tags:
+                - secrets
+        post:
+            description: Create secrets according to input parameters.
+            operationId: createSecretRequest
+            parameters:
+                - description: Secret information.
+                  in: body
+                  name: Body
+                  schema:
+                    $ref: '#/definitions/Secret'
+            responses:
+                "200":
+                    $ref: '#/responses/createSecretResponse'
+                default:
+                    $ref: '#/responses/errResponse'
+            security:
+                - api_key: []
+            summary: Create secrets.
+            tags:
+                - secrets
+    /secrets/{name}:
+        delete:
+            description: Delete secret according to input parameters.
+            operationId: deleteSecretRequest
+            parameters:
+                - description: Secret name.
+                  in: path
+                  name: name
+                  required: true
+                  type: string
+                  x-go-name: Name
+            responses:
+                "200":
+                    $ref: '#/responses/okResponse'
+                default:
+                    $ref: '#/responses/errResponse'
+            security:
+                - api_key: []
+            summary: Delete secret.
+            tags:
+                - secrets
+        get:
+            description: Get details for specified secret according to input parameters.
+            operationId: getSecretRequest
+            parameters:
+                - description: Secret name.
+                  in: path
+                  name: name
+                  required: true
+                  type: string
+                  x-go-name: Name
+            responses:
+                "200":
+                    $ref: '#/responses/getSecretResponse'
+                default:
+                    $ref: '#/responses/errResponse'
+            summary: Get details for specified secret.
+            tags:
+                - secrets
+        put:
+            description: Update secret according to input parameters.
+            operationId: updateSecretRequest
+            parameters:
+                - description: Secret information.
+                  in: body
+                  name: Body
+                  schema:
+                    $ref: '#/definitions/Secret'
+                - description: Secret name.
+                  in: path
+                  name: name
+                  required: true
+                  type: string
+                  x-go-name: Name
+            responses:
+                "200":
+                    $ref: '#/responses/updateSecretResponse'
+                default:
+                    $ref: '#/responses/errResponse'
+            security:
+                - api_key: []
+            summary: Update secret.
+            tags:
+                - secrets
     /users:
         delete:
             description: Delete users
@@ -274,6 +693,14 @@ paths:
 produces:
     - application/json
 responses:
+    createPolicyResponse:
+        description: Policy response.
+        schema:
+            $ref: '#/definitions/Policy'
+    createSecretResponse:
+        description: Secret response.
+        schema:
+            $ref: '#/definitions/Secret'
     createUserResponse:
         description: User response.
         schema:
@@ -282,10 +709,26 @@ responses:
         description: ErrResponse defines the return messages when an error occurred.
         schema:
             $ref: '#/definitions/ErrResponse'
+    getPolicyResponse:
+        description: Policy response.
+        schema:
+            $ref: '#/definitions/Policy'
+    getSecretResponse:
+        description: Secret response.
+        schema:
+            $ref: '#/definitions/Secret'
     getUserResponse:
         description: User response.
         schema:
             $ref: '#/definitions/User'
+    listPolicyResponse:
+        description: List policies response.
+        schema:
+            $ref: '#/definitions/PolicyList'
+    listSecretResponse:
+        description: List secrets response.
+        schema:
+            $ref: '#/definitions/SecretList'
     listUserResponse:
         description: list users response.
         headers:
@@ -294,6 +737,14 @@ responses:
             $ref: '#/definitions/UserList'
     okResponse:
         description: Return nil json object.
+    updatePolicyResponse:
+        description: Policy response.
+        schema:
+            $ref: '#/definitions/Policy'
+    updateSecretResponse:
+        description: Secret response.
+        schema:
+            $ref: '#/definitions/Secret'
     updateUserResponse:
         description: User response.
         schema:

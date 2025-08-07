@@ -1,12 +1,17 @@
 package app
 
 import (
+	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/gosuri/uitable"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
+
+	"github.com/pachirode/iam_study/pkg/utils/homedir"
 )
 
 const configFlagName = "config"
@@ -38,8 +43,30 @@ func addConfigFlag(basename string, fs *pflag.FlagSet) {
 			viper.AddConfigPath(".")
 
 			if names := strings.Split(basename, "-"); len(names) > 1 {
-				viper.AddConfigPath(filepath.Join())
+				viper.AddConfigPath(filepath.Join(homedir.HomeDir(), "."+names[0]))
+				viper.AddConfigPath(filepath.Join("/etc", names[0]))
 			}
+
+			viper.SetConfigName(basename)
+		}
+
+		if err := viper.ReadInConfig(); err != nil {
+			_, _ = fmt.Fprintf(os.Stderr, "[Error]: Failed to read configuration file(%s): %v\n", cfgFile, err)
+			os.Exit(1)
 		}
 	})
+}
+
+func printConfig() {
+	if keys := viper.AllKeys(); len(keys) > 0 {
+		fmt.Printf("%v Configuration items:\n", progressMessage)
+		table := uitable.New()
+		table.Separator = " "
+		table.MaxColWidth = 80
+		table.RightAlign(0)
+		for _, k := range keys {
+			table.AddRow(fmt.Sprintf("%s:", k), viper.Get(k))
+		}
+		fmt.Printf("%v", table)
+	}
 }

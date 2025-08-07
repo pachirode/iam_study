@@ -3,6 +3,8 @@ package apiserver
 import (
 	"github.com/gin-gonic/gin"
 
+	"github.com/pachirode/iam_study/internal/apiserver/controller/v1/policy"
+	"github.com/pachirode/iam_study/internal/apiserver/controller/v1/secret"
 	"github.com/pachirode/iam_study/internal/apiserver/controller/v1/user"
 	"github.com/pachirode/iam_study/internal/apiserver/store/mysql"
 	"github.com/pachirode/iam_study/internal/pkg/code"
@@ -10,6 +12,7 @@ import (
 	"github.com/pachirode/iam_study/internal/pkg/middleware/auth"
 	"github.com/pachirode/iam_study/pkg/core"
 	"github.com/pachirode/iam_study/pkg/errors"
+	_ "github.com/pachirode/iam_study/pkg/validator"
 )
 
 func installMiddleware(g *gin.Engine) {
@@ -44,6 +47,28 @@ func installController(g *gin.Engine) *gin.Engine {
 		}
 
 		v1.Use(auto.AuthFunc())
+		policyv1 := v1.Group("/policies")
+		{
+			policyController := policy.NewPolicyController(storeIns)
+
+			policyv1.POST("", policyController.Create)
+			policyv1.DELETE("", policyController.DeleteCollection)
+			policyv1.DELETE(":name", policyController.Delete)
+			policyv1.PUT(":name", policyController.Update)
+			policyv1.GET("", policyController.List)
+			policyv1.GET(":name", policyController.Get)
+		}
+
+		secretv1 := v1.Group("/secrets")
+		{
+			secretController := secret.NewSecretController(storeIns)
+
+			secretv1.POST("", secretController.Create)
+			secretv1.DELETE(":name", secretController.Delete)
+			secretv1.PUT(":name", secretController.Update)
+			secretv1.GET("", secretController.List)
+			secretv1.GET(":name", secretController.Get)
+		}
 	}
 
 	return g
