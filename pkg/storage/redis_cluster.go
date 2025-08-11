@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"crypto/tls"
+	"strings"
 	"sync/atomic"
 	"time"
 
@@ -317,4 +318,156 @@ func (o *RedisOpts) failover() *redis.FailoverOptions {
 
 		TLSConfig: o.TLSConfig,
 	}
+}
+
+// Connect will establish a connection is always true
+func (r *RedisCluster) Connect() bool {
+	return true
+}
+
+func (r *RedisCluster) singleton() redis.UniversalClient {
+	return singleton(r.IsCache)
+}
+
+func (r *RedisCluster) hashKey(in string) string {
+	if !r.HashKeys {
+		return in
+	}
+
+	return HashStr(in)
+}
+
+func (r *RedisCluster) fixKey(keyName string) string {
+	return r.KeyPrefix + r.hashKey(keyName)
+}
+
+func (r *RedisCluster) cleanKey(keyName string) string {
+	return strings.Replace(keyName, r.KeyPrefix, "", 1)
+}
+
+func (r *RedisCluster) up() error {
+	if !Connected() {
+		return ErrRedisIsDown
+	}
+
+	return nil
+}
+
+// Decrement will decrement a key in redis.
+func (r *RedisCluster) Decrement(keyName string) {
+	keyName = r.fixKey(keyName)
+	log.Debugf("Decrementing key: %s", keyName)
+	if err := r.up(); err != nil {
+		return
+	}
+	err := r.singleton().Decr(keyName).Err()
+	if err != nil {
+		log.Errorf("Error trying to decrement value: %s", err.Error())
+	}
+}
+
+// IncrememntWithExpire will increment a key in redis.
+func (r *RedisCluster) IncrememntWithExpire(keyName string, expire int64) int64 {
+	log.Debugf("Incrementing raw key: %s", keyName)
+	if err := r.up(); err != nil {
+		return 0
+	}
+	// This function uses a raw key, so we shouldn't call fixKey
+	fixedKey := keyName
+	val, err := r.singleton().Incr(fixedKey).Result()
+
+	if err != nil {
+		log.Errorf("Error trying to increment value: %s", err.Error())
+	} else {
+		log.Debugf("Incremented key: %s, val is: %d", fixedKey, val)
+	}
+
+	if val == 1 && expire > 0 {
+		log.Debug("--> Setting Expire")
+		r.singleton().Expire(fixedKey, time.Duration(expire)*time.Second)
+	}
+
+	return val
+}
+
+// StartPubSubHandler will listen for a signal and run the callback for
+// every subscription and message event.
+func (r *RedisCluster) StartPubSubHandler(channel string, callback func(interface{})) error {
+	if err := r.up(); err != nil {
+		return err
+	}
+	client := r.singleton()
+	if client == nil {
+		return errors.New("redis connection failed")
+	}
+
+	pubsub := client.Subscribe(channel)
+	defer pubsub.Close()
+
+	if _, err := pubsub.Receive(); err != nil {
+		log.Errorf("Error while receiving pubsub message: %s", err.Error())
+
+		return err
+	}
+
+	for msg := range pubsub.Channel() {
+		callback(msg)
+	}
+
+	return nil
+}
+
+// Publish publish a message to the specify channel.
+func (r *RedisCluster) Publish(channel, message string) error {
+	if err := r.up(); err != nil {
+		return err
+	}
+	err := r.singleton().Publish(channel, message).Err()
+	if err != nil {
+		log.Errorf("Error trying to set value: %s", err.Error())
+
+		return err
+	}
+
+	return nil
+}
+
+// GetAndDeleteSet get and delete a key.
+func (r *RedisCluster) GetAndDeleteSet(keyName string) []interface{} {
+	log.Debugf("Getting raw key set: %s", keyName)
+	if err := r.up(); err != nil {
+		return nil
+	}
+	log.Debugf("keyName is: %s", keyName)
+	fixedKey := r.fixKey(keyName)
+	log.Debugf("Fixed keyname is: %s", fixedKey)
+
+	client := r.singleton()
+
+	var lrange *redis.StringSliceCmd
+	_, err := client.TxPipelined(func(pipe redis.Pipeliner) error {
+		lrange = pipe.LRange(fixedKey, 0, -1)
+		pipe.Del(fixedKey)
+
+		return nil
+	})
+	if err != nil {
+		log.Errorf("Multi command failed: %s", err.Error())
+
+		return nil
+	}
+
+	vals := lrange.Val()
+	log.Debugf("Analytics returned: %d", len(vals))
+	if len(vals) == 0 {
+		return nil
+	}
+
+	log.Debugf("Unpacked vals: %d", len(vals))
+	result := make([]interface{}, len(vals))
+	for i, v := range vals {
+		result[i] = v
+	}
+
+	return result
 }
