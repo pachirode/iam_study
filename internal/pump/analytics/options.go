@@ -5,8 +5,8 @@ import (
 )
 
 type AnalyticsOptions struct {
-	RecordsBufferSize       uint64 `json:"records-buffer-size" mapstructure:"records-buffer-size"`
-	Enable                  bool   `json:"enable" mapstructure:"enable"`
+	RecordsBufferSize       uint64 `json:"records-buffer-size"       mapstructure:"records-buffer-size"`
+	Enable                  bool   `json:"enable"                    mapstructure:"enable"`
 	EnableDetailedRecording bool   `json:"enable-detailed-recording" mapstructure:"enable-detailed-recording"`
 }
 
@@ -28,6 +28,16 @@ func (o *AnalyticsOptions) AddFlags(fs *pflag.FlagSet) {
 	}
 
 	fs.BoolVar(&o.Enable, "analytics.enable", o.Enable, "Set analytics is enable")
-	fs.Uint64Var(&o.RecordsBufferSize, "analytics.records-buffer-size", o.RecordsBufferSize, "Set analytics records buffer size")
-	fs.BoolVar(&o.EnableDetailedRecording, "analytics.enable-detailed-recording", o.EnableDetailedRecording, "Set enable detailed recording")
+	fs.Uint64Var(
+		&o.RecordsBufferSize,
+		"analytics.records-buffer-size",
+		o.RecordsBufferSize,
+		"Set analytics records buffer size",
+	)
+	fs.BoolVar(
+		&o.EnableDetailedRecording,
+		"analytics.enable-detailed-recording",
+		o.EnableDetailedRecording,
+		"Set enable detailed recording",
+	)
 }

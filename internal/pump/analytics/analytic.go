@@ -15,7 +15,7 @@ type AnalyticsRecord struct {
 	Request    string    `json:"request"`
 	Policies   string    `json:"policies"`
 	Deciders   string    `json:"deciders"`
-	ExpireAt   time.Time `json:"expireAt" bson:"expireAt"`
+	ExpireAt   time.Time `json:"expireAt"   bson:"expireAt"`
 }
 
 func (a *AnalyticsRecord) GetFieldNames() []string {

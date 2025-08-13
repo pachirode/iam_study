@@ -5,7 +5,10 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v7"
+	"github.com/mitchellh/mapstructure"
+
 	genericOptions "github.com/pachirode/iam_study/internal/pkg/options"
+	"github.com/pachirode/iam_study/pkg/errors"
 	"github.com/pachirode/iam_study/pkg/log"
 )
 
@@ -181,5 +184,133 @@ func (o *RedisOpts) failover() *redis.FailoverOptions {
 		IdleCheckFrequency: o.IdleCheckFrequency,
 
 		TLSConfig: o.TLSConfig,
+	}
+}
+
+func (r *RedisClusterStorageManager) GetName() string {
+	return "redis"
+}
+
+func (r *RedisClusterStorageManager) Init(config interface{}) error {
+	r.Config = genericOptions.RedisOptions{}
+	err := mapstructure.Decode(config, &r.Config)
+	if err != nil {
+		log.Fatalf("Failed to decode configuration: %s", err.Error())
+	}
+
+	r.KeyPrefix = RedisKeyPrefix
+
+	return nil
+}
+
+func (r *RedisClusterStorageManager) Connect() bool {
+	if r.db == nil {
+		log.Debug("Connecting to redis cluster")
+		r.db = NewRedisClusterPool(false, r.Config)
+
+		return true
+	}
+
+	log.Debug("Storage Engine already initialized")
+
+	r.db = redisClusterSingleton
+
+	return true
+}
+
+func (r *RedisClusterStorageManager) hashKey(in string) string {
+	return in
+}
+
+func (r *RedisClusterStorageManager) fixKey(keyName string) string {
+	setKeyName := r.KeyPrefix + r.hashKey(keyName)
+
+	log.Debugf("Input key was: %s", setKeyName)
+
+	return setKeyName
+}
+
+func (r *RedisClusterStorageManager) GetAndDeleteSet(keyName string) []interface{} {
+	log.Debugf("Getting raw key set: %s", keyName)
+
+	if r.db == nil {
+		log.Warn("Connection dropped, connecting..")
+		r.Connect()
+
+		return r.GetAndDeleteSet(keyName)
+	}
+
+	log.Debugf("keyName is: %s", keyName)
+
+	fixedKey := r.fixKey(keyName)
+
+	log.Debugf("Fixed keyname is: %s", fixedKey)
+
+	var lrange *redis.StringSliceCmd
+	_, err := r.db.TxPipelined(func(pipe redis.Pipeliner) error {
+		lrange = pipe.LRange(fixedKey, 0, -1)
+		pipe.Del(fixedKey)
+
+		return nil
+	})
+	if err != nil {
+		log.Errorf("Multi command failed: %s", err)
+		r.Connect()
+	}
+
+	vals := lrange.Val()
+
+	result := make([]interface{}, len(vals))
+	for i, v := range vals {
+		result[i] = v
+	}
+
+	log.Debugf("Unpacked vals: %d", len(result))
+
+	return result
+}
+
+func (r *RedisClusterStorageManager) SetKey(keyName, session string, timeout int64) error {
+	log.Debugf("[STORE] SET Raw key is: %s", keyName)
+	log.Debugf("[STORE] Setting key: %s", r.fixKey(keyName))
+
+	r.ensureConnection()
+	err := r.db.Set(r.fixKey(keyName), session, 0).Err()
+	if timeout > 0 {
+		if expErr := r.SetExp(keyName, timeout); expErr != nil {
+			return expErr
+		}
+	}
+	if err != nil {
+		log.Errorf("Error trying to set value: %s", err.Error())
+
+		return errors.Wrap(err, "failed to set key")
+	}
+
+	return nil
+}
+
+func (r *RedisClusterStorageManager) SetExp(keyName string, timeout int64) error {
+	err := r.db.Expire(r.fixKey(keyName), time.Duration(timeout)*time.Second).Err()
+	if err != nil {
+		log.Errorf("Could not EXPIRE key: %s", err.Error())
+	}
+
+	return errors.Wrap(err, "failed to set expire time for key")
+}
+
+func (r *RedisClusterStorageManager) ensureConnection() {
+	if r.db != nil {
+		// already connected
+		return
+	}
+	log.Info("Connection dropped, reconnecting...")
+	for {
+		r.Connect()
+		if r.db != nil {
+			// reconnection worked
+			return
+		}
+		log.Info("Reconnecting again...")
 	}
 }

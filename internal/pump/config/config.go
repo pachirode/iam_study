@@ -1,6 +1,6 @@
 package config
 
-import "github.com/pachirode/iam_study/internal/apiserver/options"
+import "github.com/pachirode/iam_study/internal/pump/options"
 
 type Config struct {
 	*options.Options
